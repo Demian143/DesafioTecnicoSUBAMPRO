@@ -13,18 +13,17 @@ return new class extends Migration
     {
         Schema::create('projetos', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->string('codigo')->unique();
             $table->string('titulo');
             $table->text('resumo');
             $table->foreignId('orgao_id')->references('id')->on('orgaos')->onDelete('cascade');
             $table->foreignId('responsavel_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('municipio');
-            $table->boolean('status');
+            $table->enum('status', ['planejado', 'em_andamento', 'suspenso', 'concluido']);
             $table->date('inicio_previsto');
             $table->date('termino_previsto');
-            $table->double('valor_planejado');
-            $table->double('valor_exeutado');
+            $table->decimal('valor_planejado', 15, 2);
+            $table->decimal('valor_executado', 15, 2);
             $table->integer('progresso_fisico');
             $table->boolean('publicado');
             $table->text('nota_interna');
@@ -38,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('projeto');
+        Schema::dropIfExists('projetos');
     }
 };
