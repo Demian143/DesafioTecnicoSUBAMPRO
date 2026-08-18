@@ -34,5 +34,8 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-
+    'jwt' => [
+        'secret' => env('JWT_SECRET'),
+        'expiry' => env('JWT_EXPIRY', 3600),
+    ],
 ];
