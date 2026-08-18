@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orgao', function (Blueprint $table) {
+        Schema::create('orgaos', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->string('sigla')->nullable(false)->unique();
