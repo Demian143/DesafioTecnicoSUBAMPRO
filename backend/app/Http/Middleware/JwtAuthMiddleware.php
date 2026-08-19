@@ -2,19 +2,15 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
+use App\Services\JwtService;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use App\Models\User;
-use App\Services\JwtService;
-use Illuminate\Support\Facades\Auth;
-
 class JwtAuthMiddleware
-{   
-    public function __construct(private JwtService $jwt)
-    {
-    }
+{
+    public function __construct(private JwtService $jwt) {}
 
     /**
      * Handle an incoming request.
@@ -25,36 +21,30 @@ class JwtAuthMiddleware
     {
         $token = $request->bearerToken();
 
-        if (!$token) {
+        if ($token === null) {
             return response()->json([
-                'error' => 'Unauthorized: missing Bearer token'
-                ], 401);
-        }
-
-        if (! $this->jwt->isValid($token)) {
-            return response()->json(['message' => 'Invalid token structure'], 401);
+                'message' => 'Unauthenticated.',
+            ], 401);
         }
 
         $decoded = $this->jwt->decodeToken($token);
 
-        if (!$decoded) {
-            return response()->json(['message' => 'Invalid or corrupted token'], 401);
-        }
-        // Talvez ocorra um erro aqui, pois o método isExpired espera uma string, mas está sendo passado um array. Talvez seja necessário passar o token original para a verificação de expiração.
-        if ($this->jwt->isExpired($decoded['token'])) {
-            return response()->json(['message' => 'Token has expired'], 401);
+        if ($decoded === null) {
+            return response()->json(['message' => 'Invalid or expired token.'], 401);
         }
 
-        $user = User::query()->firstWhere('id', $decoded['sub'] ?? null);
+        $user = User::query()
+            ->whereKey($decoded['sub'] ?? null)
+            ->where('ativo', true)
+            ->first();
 
-        if (! $user) {
+        if ($user === null) {
             return response()->json([
-                'message' => 'User not found or no longer exists',
+                'message' => 'Unauthenticated.',
             ], 401);
         }
 
-        $request->setUserResolver(fn () => $user);
-        Auth::login($user);
+        $request->setUserResolver(fn (): User => $user);
 
         return $next($request);
     }
