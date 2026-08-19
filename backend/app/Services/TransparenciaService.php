@@ -46,10 +46,10 @@ class TransparenciaService
     {
         $lastUpdated = $this->projeto->query()
             ->where('publicado', true)
-            ->orderByDesc('updated_at')
+            ->orderByDesc('atualizado_em')
             ->first();
 
-        return $lastUpdated?->updated_at?->toIso8601String();
+        return $lastUpdated?->atualizado_em?->toIso8601String();
     }
 
     private function countProjetos(): int
