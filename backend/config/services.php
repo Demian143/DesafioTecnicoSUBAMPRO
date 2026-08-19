@@ -37,5 +37,6 @@ return [
     'jwt' => [
         'secret' => env('JWT_SECRET'),
         'expiry' => env('JWT_EXPIRY', 3600),
+        'algorithm' => env('JWT_ALGORITHM', 'HS256'),
     ],
 ];
