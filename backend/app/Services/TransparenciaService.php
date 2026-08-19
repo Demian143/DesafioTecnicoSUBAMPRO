@@ -36,7 +36,7 @@ class TransparenciaService
     public function getResumo(): array
     {
         return [
-            'total_projetos' => $this->countProjetos(),
+            'projetos_publicados' => $this->countProjetos(),
             'valor_total_planejado' => $this->valorTotalPlanejado(),
             'valor_total_executado' => $this->valorTotalExecutado(),
         ];
