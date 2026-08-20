@@ -2,16 +2,26 @@
 
 namespace App\Services;
 
+use App\Models\Orgao;
 use App\Models\Projeto;
 
 class TransparenciaService
 {
     public function __construct(private Projeto $projeto) {}
     
-    public function getProjetos(int $page = 1, int $perPage = 10): array
+    public function getProjetos(int $page = 1, int $perPage = 10, ?string $situacao = null, ?int $orgao = null): array
     {
-        $projetos = $this->projeto->query()
-            ->where('publicado', true)
+        $query = $this->projeto->query()->where('publicado', true);
+
+        if ($situacao !== null) {
+            $query->where('status', $situacao);
+        }
+
+        if ($orgao !== null) {
+            $query->where('orgao_id', $orgao);
+        }
+
+        $projetos = $query
             ->with('orgao:id,nome')
             ->paginate($perPage,
                 ['id', 'codigo', 'titulo', 'resumo', 'orgao_id', 'municipio', 'status', 'inicio_previsto', 'termino_previsto', 'valor_planejado', 'valor_executado', 'progresso_fisico'],
@@ -31,6 +41,17 @@ class TransparenciaService
             ]);
 
         return $projetos->toArray();
+    }
+
+    /** Return active organs that have at least one published project. */
+    public function getOrgaos(): array
+    {
+        return Orgao::query()
+            ->where('ativo', true)
+            ->whereHas('projetos', fn ($query) => $query->where('publicado', true))
+            ->orderBy('nome')
+            ->get(['id', 'sigla', 'nome'])
+            ->toArray();
     }
 
     public function getResumo(): array
