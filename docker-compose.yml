@@ -1,25 +1,47 @@
 services:
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://localhost:8000/api
+    ports:
+      - "3000:3000"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+    depends_on:
+      backend:
+        condition: service_healthy
+
   backend:
     build:
       context: ./backend
     ports:
       - "8000:8000"
     environment:
-      APP_ENV: local
-      APP_DEBUG: "true"
+      APP_ENV: production
+      APP_DEBUG: "false"
       APP_URL: http://localhost:8000
+      FRONTEND_URL: http://localhost:3000
+      APP_KEY: base64:ZmFrZS1rZXktZm9yLWRvY2tlci1sb2NhbC0xMjM0NTY=
+      JWT_SECRET: dev-only-jwt-secret-change-before-deploy
+      JWT_EXPIRY: 3600
+      JWT_ALGORITHM: HS256
       DB_CONNECTION: pgsql
       DB_HOST: postgres
       DB_PORT: 5432
       DB_DATABASE: desafio_subampro
       DB_USERNAME: laravel
       DB_PASSWORD: laravel
-    volumes:
-      - ./backend:/var/www/html
-      - laravel_vendor:/var/www/html/vendor
     depends_on:
       postgres:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "php -r '$$s=@fsockopen(\"127.0.0.1\",8000); exit($$s ? 0 : 1);'"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
     command: sh -c "php artisan migrate --seed --force && php artisan serve --host=0.0.0.0 --port=8000"
 
   postgres:
@@ -48,4 +70,3 @@ services:
 
 volumes:
   postgres_data:
-  laravel_vendor:
