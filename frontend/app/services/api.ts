@@ -4,7 +4,10 @@ import type {
   LoginResponse,
   ManagementProjectsResponse,
   ProjectFilters,
+  PublicOrgansResponse,
+  PublicProjectResponse,
   TransparencyResponse,
+  TransparencyFilters,
   User,
 } from "../stores/data/types";
 
@@ -20,10 +23,22 @@ export const api = {
     return data;
   },
 
-  async transparency(page = 1, perPage = 10): Promise<TransparencyResponse> {
+  async transparency(filters: TransparencyFilters = {}): Promise<TransparencyResponse> {
     const { data } = await http.get<TransparencyResponse>("/transparencia/projetos", {
-      params: { page, per_page: perPage },
+      params: filters,
     });
+    return data;
+  },
+
+  async transparencyProject(codigo: string): Promise<PublicProjectResponse> {
+    const { data } = await http.get<PublicProjectResponse>(
+      `/transparencia/projetos/${encodeURIComponent(codigo)}`,
+    );
+    return data;
+  },
+
+  async transparencyOrgaos(): Promise<PublicOrgansResponse> {
+    const { data } = await http.get<PublicOrgansResponse>("/transparencia/orgaos");
     return data;
   },
 

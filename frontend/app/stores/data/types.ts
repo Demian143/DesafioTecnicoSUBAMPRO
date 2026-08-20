@@ -39,6 +39,12 @@ export type PublicProject = {
   percentual_concluido: number;
 };
 
+export type PublicOrgan = {
+  id: number;
+  sigla: string;
+  nome: string;
+};
+
 export type Project = PublicProject & {
   id: number;
   resumo: string | null;
@@ -55,6 +61,13 @@ export type ProjectFilters = {
   status?: string;
 };
 
+export type TransparencyFilters = {
+  page?: number;
+  per_page?: number;
+  situacao?: "planejado" | "em_andamento" | "suspenso" | "concluido";
+  orgao?: number;
+};
+
 export type TransparencySummary = {
   projetos_publicados: number;
   valor_total_planejado: number;
@@ -64,7 +77,16 @@ export type TransparencySummary = {
 export type TransparencyResponse = {
   ultima_atualizacao: string | null;
   resumo: TransparencySummary;
+  filtros_aplicados?: Pick<TransparencyFilters, "situacao" | "orgao">;
   dados: Pagination<PublicProject>;
+};
+
+export type PublicProjectResponse = {
+  dados: PublicProject;
+};
+
+export type PublicOrgansResponse = {
+  dados: PublicOrgan[];
 };
 
 export type ManagementProjectsResponse = {

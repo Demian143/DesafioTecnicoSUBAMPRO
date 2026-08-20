@@ -7,7 +7,9 @@ import type {
   Project,
   ProjectFilters,
   PublicProject,
+  PublicOrgan,
   TransparencySummary,
+  TransparencyFilters,
   User,
 } from "./types";
 
@@ -15,6 +17,8 @@ type DataState = {
   user: User | null;
   transparency: {
     projects: Pagination<PublicProject> | null;
+    project: PublicProject | null;
+    orgaos: PublicOrgan[];
     summary: TransparencySummary | null;
     lastUpdated: string | null;
   };
@@ -23,14 +27,16 @@ type DataState = {
   loading: boolean;
   error: string | null;
   loadUser: () => Promise<void>;
-  loadTransparency: (page?: number, perPage?: number) => Promise<void>;
+  loadTransparency: (filters?: TransparencyFilters) => Promise<void>;
+  loadTransparencyProject: (codigo: string) => Promise<void>;
+  loadTransparencyOrgaos: () => Promise<void>;
   loadManagementProjects: (filters?: ProjectFilters) => Promise<void>;
   clearData: () => void;
 };
 
 export const useDataStore = create<DataState>((set, get) => ({
   user: null,
-  transparency: { projects: null, summary: null, lastUpdated: null },
+  transparency: { projects: null, project: null, orgaos: [], summary: null, lastUpdated: null },
   managementProjects: null,
   filters: { page: 1, per_page: 10 },
   loading: false,
@@ -40,15 +46,29 @@ export const useDataStore = create<DataState>((set, get) => ({
     await run(set, () => api.me(), (user) => set({ user }));
   },
 
-  async loadTransparency(page = 1, perPage = 10) {
-    await run(set, () => api.transparency(page, perPage), (result) =>
+  async loadTransparency(filters = {}) {
+    await run(set, () => api.transparency(filters), (result) =>
       set({
         transparency: {
           projects: result.dados,
+          project: get().transparency.project,
+          orgaos: get().transparency.orgaos,
           summary: result.resumo,
           lastUpdated: result.ultima_atualizacao,
         },
       }),
+    );
+  },
+
+  async loadTransparencyProject(codigo) {
+    await run(set, () => api.transparencyProject(codigo), (result) =>
+      set({ transparency: { ...get().transparency, project: result.dados } }),
+    );
+  },
+
+  async loadTransparencyOrgaos() {
+    await run(set, () => api.transparencyOrgaos(), (result) =>
+      set({ transparency: { ...get().transparency, orgaos: result.dados } }),
     );
   },
 
@@ -62,7 +82,7 @@ export const useDataStore = create<DataState>((set, get) => ({
   clearData() {
     set({
       user: null,
-      transparency: { projects: null, summary: null, lastUpdated: null },
+      transparency: { projects: null, project: null, orgaos: [], summary: null, lastUpdated: null },
       managementProjects: null,
       error: null,
     });
