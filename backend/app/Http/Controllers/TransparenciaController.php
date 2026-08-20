@@ -41,4 +41,19 @@ class TransparenciaController extends Controller
             'dados' => $this->transparenciaService->getOrgaos(),
         ]);
     }
+
+    public function getProjeto(string $codigo): JsonResponse
+    {
+        $projeto = $this->transparenciaService->getProjeto($codigo);
+
+        if ($projeto === null) {
+            return response()->json([
+                'message' => 'Projeto não encontrado.',
+            ], 404);
+        }
+
+        return response()->json([
+            'dados' => $projeto,
+        ]);
+    }
 }

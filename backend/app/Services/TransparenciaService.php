@@ -54,6 +54,34 @@ class TransparenciaService
             ->toArray();
     }
 
+    /** Return a single published project using the public representation. */
+    public function getProjeto(string $codigo): ?array
+    {
+        $projeto = $this->projeto->query()
+            ->where('publicado', true)
+            ->with('orgao:id,nome')
+            ->where('codigo', $codigo)
+            ->first();
+
+        if ($projeto === null) {
+            return null;
+        }
+
+        return [
+            'codigo' => $projeto->codigo,
+            'titulo' => $projeto->titulo,
+            'descricao' => $projeto->resumo,
+            'orgao' => $projeto->orgao?->nome,
+            'municipio' => $projeto->municipio,
+            'situacao' => $projeto->status,
+            'inicio_previsto' => $projeto->inicio_previsto,
+            'termino_previsto' => $projeto->termino_previsto,
+            'orcamento_previsto' => $projeto->valor_planejado,
+            'valor_executado' => $projeto->valor_executado,
+            'percentual_concluido' => $projeto->progresso_fisico,
+        ];
+    }
+
     public function getResumo(): array
     {
         return [
