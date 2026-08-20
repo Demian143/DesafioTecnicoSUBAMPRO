@@ -5,4 +5,5 @@ export default [
   route("login", "routes/login.tsx"),
   route("gestao", "routes/gestao.tsx"),
   route("transparencia", "routes/transparencia.tsx"),
+  route("transparencia/projetos/:codigo", "routes/transparencia-projeto.tsx"),
 ] satisfies RouteConfig;

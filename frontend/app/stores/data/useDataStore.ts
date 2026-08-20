@@ -61,6 +61,7 @@ export const useDataStore = create<DataState>((set, get) => ({
   },
 
   async loadTransparencyProject(codigo) {
+    set({ transparency: { ...get().transparency, project: null } });
     await run(set, () => api.transparencyProject(codigo), (result) =>
       set({ transparency: { ...get().transparency, project: result.dados } }),
     );

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
 import { SummaryCard } from "../components/SummaryCard";
 import { useDataStore } from "../stores/data/useDataStore";
 import type { TransparencyFilters } from "../stores/data/types";
@@ -126,6 +127,12 @@ export default function Transparencia() {
                 <span>Planejado: {formatCurrency(project.orcamento_previsto)}</span>
                 <span>Executado: {formatCurrency(project.valor_executado)}</span>
               </div>
+              <Link
+                to={`/transparencia/projetos/${encodeURIComponent(project.codigo)}`}
+                className="mt-4 inline-block text-sm font-medium text-gov-primary hover:underline"
+              >
+                Ver detalhes
+              </Link>
             </article>
           ))}
 
