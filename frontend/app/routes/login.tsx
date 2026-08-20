@@ -5,8 +5,8 @@ import { ApiError } from "../services/errors";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("ana.martins@projetoaberto.local");
+  const [password, setPassword] = useState("ProjetoRJ@2026");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
