@@ -22,7 +22,7 @@ export function AppNavigation() {
           {token ? (
             <>
               <button type="button" disabled className="nav-placeholder">
-                Projetos
+                Transparência
               </button>
               <button type="button" disabled className="nav-placeholder">
                 Gestão

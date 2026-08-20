@@ -1,0 +1,12 @@
+export function meta() {
+  return [{ title: "Gestão de projetos | Projeto Aberto" }];
+}
+
+export default function Gestao() {
+  return (
+    <main className="mx-auto max-w-6xl px-4 py-10">
+      <h1 className="text-2xl font-semibold text-gov-dark">Gestão de projetos</h1>
+      <p className="mt-2 text-slate-600">Área de gestão em construção.</p>
+    </main>
+  );
+}

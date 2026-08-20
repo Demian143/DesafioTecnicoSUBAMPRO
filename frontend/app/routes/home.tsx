@@ -1,4 +1,6 @@
 import type { Route } from "./+types/home";
+import { Navigate } from "react-router";
+import { useAuthStore } from "../stores/auth/useAuthStore";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -8,9 +10,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  return (
-    <main className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-2xl font-semibold text-gov-dark">Bem-vindo</h1>
-    </main>
-  );
+  const token = useAuthStore((state) => state.token);
+
+  return <Navigate to={token ? "/gestao" : "/transparencia"} replace />;
 }
