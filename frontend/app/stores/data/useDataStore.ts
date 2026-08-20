@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { api } from "../../services/api";
+import { toApiError } from "../../services/errors";
 import type {
   ManagementProjectsResponse,
   Pagination,
@@ -78,7 +79,8 @@ async function run<T>(
     onSuccess(await request());
     set({ loading: false });
   } catch (error) {
-    set({ loading: false, error: error instanceof Error ? error.message : "Request failed" });
-    throw error;
+    const apiError = toApiError(error);
+    set({ loading: false, error: apiError.message });
+    throw apiError;
   }
 }
