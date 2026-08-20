@@ -1,4 +1,4 @@
-FROM php:8.3-cli
+FROM php:8.4-cli
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends git libonig-dev libpq-dev libxml2-dev unzip \
@@ -10,9 +10,11 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 COPY composer.json composer.lock ./
-RUN composer install --no-interaction --no-progress --prefer-dist --optimize-autoloader
+RUN composer install --no-interaction --no-progress --prefer-dist --optimize-autoloader --no-scripts
 
 COPY . .
+
+RUN composer dump-autoload --optimize
 
 RUN chown -R www-data:www-data storage bootstrap/cache
 
