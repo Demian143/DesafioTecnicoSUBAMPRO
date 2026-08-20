@@ -14,3 +14,13 @@ body {
     color-scheme: dark;
   }
 }
+
+@layer components {
+  .nav-button {
+    @apply rounded-md bg-gov-primary px-3 py-2 text-sm font-medium text-white hover:bg-gov-dark;
+  }
+
+  .nav-placeholder {
+    @apply cursor-not-allowed rounded-md border border-slate-200 px-3 py-2 text-sm text-slate-400;
+  }
+}
