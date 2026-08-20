@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
     private function seedOrgaos(array $orgaos): void
     {
         foreach ($orgaos as $orgaoData) {
-            Orgao::forceCreate($orgaoData);
+            $this->upsertModel(Orgao::class, $orgaoData);
         }
     }
 
@@ -34,14 +34,27 @@ class DatabaseSeeder extends Seeder
         foreach ($users as $userData) {
             $userData['password'] = Hash::make($userData['senha_demo']);
             unset($userData['senha_demo']);
-            User::forceCreate($userData);
+            $this->upsertModel(User::class, $userData);
         }
     }
 
     private function seedProjetos(array $projetos): void
     {
         foreach ($projetos as $projetoData) {
-            Projeto::forceCreate($projetoData);
+            $this->upsertModel(Projeto::class, $projetoData);
         }
+    }
+
+    /**
+     * Create or update a fixture while preserving its explicit primary key.
+     * This makes the seeder safe to run on every container startup.
+     *
+     * @param class-string<\Illuminate\Database\Eloquent\Model> $modelClass
+     * @param array<string, mixed> $data
+     */
+    private function upsertModel(string $modelClass, array $data): void
+    {
+        $model = $modelClass::query()->firstOrNew(['id' => $data['id'] ?? null]);
+        $model->forceFill($data)->save();
     }
 }
