@@ -28,12 +28,12 @@ export function AppNavigation() {
                 Gestão
               </button>
               <button type="button" onClick={logout} className="nav-button">
-                Logout
+                Sair
               </button>
             </>
           ) : (
             <NavLink to="/login" className="nav-button">
-              Login
+              Entrar
             </NavLink>
           )}
         </div>
