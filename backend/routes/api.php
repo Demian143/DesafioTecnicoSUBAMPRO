@@ -9,7 +9,12 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('jwt.auth')->get('/me', [AuthController::class, 'me']);
 
-Route::middleware('jwt.auth')->get('/gestao/projetos', [GestaoProjetosController::class, 'getProjetos']);
+Route::middleware('jwt.auth')->prefix('gestao')->group(function () {
+    Route::get('/projetos', [GestaoProjetosController::class, 'index']);
+    Route::get('/projetos/{id}', [GestaoProjetosController::class, 'show'])->whereNumber('id');
+    Route::post('/projetos', [GestaoProjetosController::class, 'store']);
+    Route::put('/projetos/{id}', [GestaoProjetosController::class, 'update'])->whereNumber('id');
+});
 
 Route::get('/transparencia/projetos', [TransparenciaController::class, 'getTransparencia']);
 Route::get('/transparencia/projetos/{codigo}', [TransparenciaController::class, 'getProjeto']);

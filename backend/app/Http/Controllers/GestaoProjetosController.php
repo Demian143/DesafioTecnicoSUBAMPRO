@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreProjetoRequest;
+use App\Http\Requests\UpdateProjetoRequest;
 use Illuminate\Http\Request;
 use App\Services\GestaoProjetosService;
 
@@ -9,19 +11,26 @@ class GestaoProjetosController extends Controller
 {
     public function __construct(private GestaoProjetosService $gestaoProjetosService) {}
 
-    public function getProjetos(Request $request)
+    public function index(Request $request)
     {
-        $perPage = $request->query('per_page', 10);
-        $page = $request->query('page', 1);
+        $filtersInput = $request->validate([
+            'page' => ['sometimes', 'integer', 'min:1'],
+            'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
+            'orgao_id' => ['sometimes', 'integer', 'exists:orgaos,id'],
+            'status' => ['sometimes', 'string', 'in:planejado,em_andamento,suspenso,concluido'],
+        ]);
+
+        $perPage = $filtersInput['per_page'] ?? 10;
+        $page = $filtersInput['page'] ?? 1;
         
         $filters = [];
-        $orgao_id = $request->query('orgao_id');
+        $orgao_id = $filtersInput['orgao_id'] ?? null;
         
         if ($orgao_id) {
             $filters['orgao_id'] = $orgao_id;
         }
         
-        $status = $request->query('status');
+        $status = $filtersInput['status'] ?? null;
         
         if ($status) {
             $filters['status'] = $status;
@@ -34,5 +43,26 @@ class GestaoProjetosController extends Controller
             'filtros_aplicados' => $filters,
             'data' => $projetos
         ]);
+    }
+
+    public function show(int $id)
+    {
+        return response()->json([
+            'data' => $this->gestaoProjetosService->getProjeto($id),
+        ]);
+    }
+
+    public function store(StoreProjetoRequest $request)
+    {
+        $projeto = $this->gestaoProjetosService->criarProjeto($request->validated());
+
+        return response()->json(['data' => $projeto], 201);
+    }
+
+    public function update(UpdateProjetoRequest $request, int $id)
+    {
+        $projeto = $this->gestaoProjetosService->atualizarProjeto($id, $request->validated());
+
+        return response()->json(['data' => $projeto]);
     }
 }

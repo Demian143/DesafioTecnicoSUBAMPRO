@@ -117,9 +117,12 @@ Somente projetos com `publicado = true` são retornados. Os serializers público
 
 ```http
 GET /api/gestao/projetos
+GET /api/gestao/projetos/{id}
+POST /api/gestao/projetos
+PUT /api/gestao/projetos/{id}
 ```
 
-Essa rota exige `Authorization: Bearer <token>` e aceita `page`, `per_page`, `orgao_id` e `status`.
+Todas as rotas de gestão exigem `Authorization: Bearer <token>`. A listagem aceita `page`, `per_page`, `orgao_id` e `status`. Criação e edição validam status, datas, valores, progresso físico, órgão e responsável.
 
 ## Arquitetura resumida
 
@@ -160,8 +163,7 @@ Os testes Laravel atuais são a estrutura inicial do projeto. A cobertura espec�
 
 ## Limitações e próximos passos
 
-- A área de gestão ainda não possui telas de criação e edição de projetos.
-- A API de gestão atualmente oferece apenas a consulta filtrada.
+- A tela frontend da área de gestão ainda é um placeholder; a API administrativa já oferece consulta, detalhe, criação e edição.
 - Não existe refresh token; quando o JWT expira, é necessário fazer login novamente.
 - O filtro de busca textual ainda não foi definido/implementado.
 - A rota pública usa `codigo` em vez do `id` interno; códigos sequenciais ainda podem ser previsíveis. Um UUID público seria uma evolução possível.
